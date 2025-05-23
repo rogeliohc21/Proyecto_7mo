@@ -1,6 +1,6 @@
 <center>
   
- 🕵️‍♂️ # Robo de identidad en redes sociales 🕵️‍♂️💰🚨🏃‍♂️
+ # 🕵️‍♂️  Robo de identidad en redes sociales 🕵️‍♂️💰🚨🏃‍♂️
 
 </center>  
 
