@@ -1,2 +1,2 @@
-# Proyecto_7mo
+# Proyecto_7mo #'*Robo de identidad en redes sociales*'
 Proyecto Prototípico del 7mo Semestre de la Licenciatura en Ciencia de Datos
