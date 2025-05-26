@@ -8,6 +8,7 @@ from telegram.ext import (
     filters,
     ConversationHandler,
     ContextTypes,
+    Application, # Importa aplicacion.
 )
 from generar_reporte import crear_reporte_pdf, generar_nivel_riesgo
 from pymongo import MongoClient
@@ -15,10 +16,14 @@ from dotenv import load_dotenv
 import tempfile
 import os
 
+# Flask y request para webhooks
+from flask import Flask, request
+
 # === Cargar .env ===
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL") # varable en Render
 
 # === Conectar a Mongo ===
 cliente = MongoClient(MONGO_URI)
@@ -252,6 +257,9 @@ async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE):
         del user_data_temp[user_id]
     return ConversationHandler.END
 
+# cambios para webhook
+app_flask = Flask(__name__) # Instancia de flask
+
 # === Configurar bot ===
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
@@ -268,7 +276,25 @@ conv_handler = ConversationHandler(
 
 app.add_handler(conv_handler)
 
+@app_flask.route(f'/{TELEGRAM_TOKEN}', methods=['POST']) # el path de webhook debe ser el token del bot
+async def webhook_handler():
+    "recibe actaulizaciones del bot y las procesa"
+    if request.method == 'POST':
+        update = Update.de_json(request.get_json(force=True), app.bot)
+        await app.process_update(update)
+    return "ok"
+
+@app_flask.route('/')
+def index():
+    return "Bot esta corriendo"
+
 
 if __name__ == "__main__":
-    print("Bot corriendo con flujo mixto y mensaje de bienvenida...")
-    app.run_polling() 
+    PORT = int(os.environ.get("PORT", 5000))
+    if WEBHOOK_URL:
+        app.bot.set_webhook(url=WEBHOOK_URL + TELEGRAM_TOKEN)
+        print(f"Webhook configurado en: {WEBHOOK_URL + TELEGRAM_TOKEN}")
+    else:
+        print("WEBHOOK_URL no esta configurado. EL bot no funciona correcto")  # Puerto por defecto en Render
+    
+    app_flask.run(host="0.0.0.0", port=PORT)  # Ejecuta la app de Flask en el puerto especificado
