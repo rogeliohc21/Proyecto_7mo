@@ -15,6 +15,7 @@ db = cliente["chatbot_db"]
 
 # app dash
 app = dash.Dash(__name__)
+server = app.server
 app.title = "Dashboard de Riesgo por Usuario"
 
 # layout
