@@ -1,1 +1,0 @@
-web: gunicorn chat:app_flask
