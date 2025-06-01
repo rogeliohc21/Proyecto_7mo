@@ -57,7 +57,7 @@ for doc in coleccion.find():
 # Asegúrate de que 'inegi.csv' esté en la misma carpeta que este script.
 try:
     # Renombrar el archivo de 'inegi - Sheet1.csv' a 'inegi.csv' en tu directorio
-    df_inegi = pd.read_csv("/Users/rogeliohidalgo/Documents/visual_code/pp/inegi - Sheet1.csv")
+    df_inegi = pd.read_csv("inegi - Sheet1.csv")
 
     # Renombrar columnas para redes sociales
     nombres_redes = {
