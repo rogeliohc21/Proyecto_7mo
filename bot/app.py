@@ -263,7 +263,7 @@ conv_handler = ConversationHandler(
     },
     fallbacks=[CommandHandler('cancelar', cancelar)]
     per_message=True,
-    per_chat=True,
+    per_chat=True
        
 )
 
