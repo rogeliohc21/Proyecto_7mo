@@ -262,10 +262,12 @@ conv_handler = ConversationHandler(
         ]
     },
     fallbacks=[CommandHandler('cancelar', cancelar)]
+    per_message=True,
+    per_chat=True,
        
 )
 
-app.add_handler(conv_handler)
+app.add_handler(CallbackQueryHandler(iniciar_test, pattern="^comenzar_test$"))
 
 if __name__ == "__main__":
     print("Bot corriendo con flujo mixto y mensaje de bienvenida...")
