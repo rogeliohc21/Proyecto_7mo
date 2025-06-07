@@ -261,9 +261,7 @@ conv_handler = ConversationHandler(
             CallbackQueryHandler(manejar_callback)
         ]
     },
-    fallbacks=[CommandHandler('cancelar', cancelar)],
-    per_message=True,
-    per_chat=True
+    fallbacks=[CommandHandler('cancelar', cancelar)]
        
 )
 
