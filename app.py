@@ -416,11 +416,11 @@ def actualizar_datos(n, base):
                         return r["respuesta"]
                 return "No disponible"
 
-            satisfaccion = "No disponible"
-            for r in respuestas:
-                if "satisfacción" in r["pregunta"].lower(): # Busca una pregunta que contenga "satisfacción"
-                    satisfaccion = r["respuesta"]
-                    break
+            satisfaccion = doc.get("satisfaccion", "No disponible")
+            #for r in respuestas:
+                #if "satisfacción" in r["pregunta"].lower(): # Busca una pregunta que contenga "satisfacción"
+                    #satisfaccion = r["respuesta"]
+                    #break
 
             datos.append({
                 "telegram_id": doc.get("telegram_id"),
@@ -468,16 +468,24 @@ def actualizar_datos(n, base):
 
         alcaldia_daily_counts = df_tendencia_alcaldia.groupby(["fecha", "location"]).size().reset_index(name="conteo")
 
-        grafica_tendencia_alcaldia = px.line(
-            alcaldia_daily_counts,
-            x="fecha",
-            y="conteo",
-            color="location",
-            labels={'fecha': 'Fecha', 'conteo': 'Número de Conexiones', 'location': 'Alcaldía'},
-            title="Tendencia de Conexiones por Alcaldía a lo largo del tiempo",
-            template='slate',
-            markers=True
+        heatmap_data = alcaldia_daily_counts.pivot(index="fecha", columns="location", values="conteo").fillna(0)
+
+        grafica_tendencia_alcaldia = go.Figure(
+            data=go.Heatmap(
+                z=heatmap_data.values,
+                x=heatmap_data.columns,
+                y=heatmap_data.index,
+                colorscale="Viridis",  # Puedes probar: "YlGnBu", "Cividis", "Hot", etc.
+                colorbar=dict(title="Número de Conexiones")
+            )
         )
+        grafica_tendencia_alcaldia.update_layout(
+            title="Mapa de Calor de Conexiones por Alcaldía a lo largo del tiempo",
+            xaxis_title="Alcaldía",
+            yaxis_title="Fecha",
+            template="slate",
+        )
+
     else:
         grafica_tendencia_alcaldia = go.Figure(layout={"title": "Tendencia de Conexiones por Alcaldía (Datos no disponibles o fuente no compatible)"})
 
