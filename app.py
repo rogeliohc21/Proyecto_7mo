@@ -636,22 +636,22 @@ def actualizar_tabla_lugares_conexion_frecuentes(telegram_id):
 )
 def actualizar_tabla_anomalias_usuario(telegram_id):
     if not telegram_id:
-        return go.Figure(layout={"title": "Por favor, selecciona un usuario."}) # Return a figure
+        return [] # Return a figure
 
     doc = db["usuarios_combinados"].find_one({"telegram_id": telegram_id})
     if not doc:
-        return go.Figure(layout={"title": f"Usuario {telegram_id} no encontrado."}) # Return a figure
+        return [] # Return a figure
 
     eventos = doc.get("eventos_acceso", [])
     if not eventos:
-        return go.Figure(layout={"title": f"No hay datos de eventos para el usuario {telegram_id}."}) # Return a figure
+        return [] # Return a figure
 
     df_eventos = pd.DataFrame(eventos)
 
     anomalias_df = df_eventos[df_eventos["es_anomalia_simulda"] == 1].copy()
 
     if anomalias_df.empty:
-        return go.Figure(layout={"title": f"No se detectaron anomalías para el usuario {telegram_id}."}) # Return a figure
+        return [] # Return a figure
 
     mexico_city_tz = pytz.timezone('America/Mexico_City')
     anomalias_df["login_time"] = pd.to_datetime(anomalias_df["login_time"])
@@ -661,6 +661,8 @@ def actualizar_tabla_anomalias_usuario(telegram_id):
     anomalias_df = anomalias_df.sort_values(by="login_time", ascending=False)
 
     top_3_anomalias = anomalias_df.head(3)
+
+    return top_3_anomalias[["login_time_str", "location", "device"]].to_dict("records")
 
     # Create a table using plotly.graph_objs.Figure
     header_values = ["Hora", "Ubicación", "Dispositivo"]
