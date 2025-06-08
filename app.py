@@ -631,7 +631,7 @@ def actualizar_tabla_lugares_conexion_frecuentes(telegram_id):
 
 # CALLBACK: para la tabla de Últimas 3 Anomalías
 @app.callback(
-    Output("tabla_anomalias_recientes", "figure"), # Changed output to figure
+    Output("tabla_anomalias_recientes", "data"), # Changed output to figure
     Input("usuario_detail_dropdown", "value")
 )
 def actualizar_tabla_anomalias_usuario(telegram_id):
